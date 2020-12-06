@@ -1,28 +1,3 @@
-// 1.axios的基本使用
-// import axios from 'axios'
-// axios({
-//   url: 'http://123.207.32.32:8000/home/multidata'
-// }).then(res => {
-//   console.log(res);
-// })
-
-// 2.axios发送并发请求
-// axios.all([
-//   axios({
-//     url: 'http://123.207.32.32:8000/home/multidata'
-//   }), 
-//   axios({
-//     url: 'http://123.207.32.32:8000/home/data',
-//     params: {
-//       type: 'pop',
-//       page: 1
-//     }
-//   })
-// ]).then(axios.spread((res1, res2) => {
-//   console.log(res1);
-//   console.log(res2);
-// }))
-
 import axios from 'axios'
 
 export function request(config) {

@@ -19,7 +19,7 @@
       path: String,
       activeColor: {
         type: String,
-        default: '#dd412c'
+        default: '#d81e06'
       }
     },
     computed: {
@@ -41,15 +41,17 @@
 <style scoped>
   .tab-bar-item {
     flex: 1;
-    height: 49px;
+    height: 0.98rem;
     text-align: center;
-    font-size: 14px;
+    font-size: 0.28rem;
+    color: #2c2c2c;
+    font-weight: 600;
   }
   .tab-bar-item img {
-    width: 24px;
-    height: 24px;
+    width: 0.48rem;
+    height: 0.48rem;
     vertical-align: middle;
-    margin-top: 3px;
-    margin-bottom: 2px;
+    margin-top: 0.06rem;
+    margin-bottom: 0.04rem;
   }
 </style>

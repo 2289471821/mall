@@ -21,13 +21,13 @@
 <style scoped>
   .nav-bar {
     display: flex;
-    height: 44px;
-    line-height: 44px;
+    height: 0.88rem;
+    line-height: 0.88rem;
     text-align: center;
-    box-shadow: 0 1px 1px rgba(100, 100, 100, .1);
+    box-shadow: 0 0.02rem 0.02rem rgba(100, 100, 100, .1);
   }
   .left, .right {
-    width: 60px;
+    width: 1.2rem;
   }
   .center {
     flex: 1;
