@@ -1,10 +1,15 @@
 <template>
-  <div>
-    轮播图
-  </div>
+  <swiper>
+    <swiper-item v-for="item in banners" :key="item.link">
+      <a :href="item.link">
+        <img :src="item.image" :alt="item.title">
+      </a>
+    </swiper-item>
+  </swiper>
 </template>
 
 <script>
+  import { Swiper, SwiperItem } from 'components/common/swiper/index'
   export default {
     name: 'HomeSwiper',
     props: {
@@ -14,6 +19,10 @@
           return []
         }
       }
+    },
+    components: {
+      Swiper,
+      SwiperItem
     }
   }
 </script>
