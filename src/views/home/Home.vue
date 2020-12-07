@@ -4,12 +4,18 @@
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
     <!-- 首页轮播图展示部分 -->
     <home-swiper :banners="banners"></home-swiper>
+    <!-- 首页推荐展示部分 -->
+    <home-recommend :recommends="recommends"></home-recommend>
+    <!-- 首页本周流行展示部分 -->
+    <home-popular></home-popular>
   </div>
 </template>
 
 <script>
   import NavBar from 'components/common/navbar/NavBar'
   import HomeSwiper from './childComps/HomeSwiper'
+  import HomeRecommend from './childComps/HomeRecommend'
+  import HomePopular from './childComps/HomePopular'
 
   import { getHomeMultidata } from 'network/home'
 
@@ -17,7 +23,9 @@
     name: 'Home',
     components: {
       NavBar,
-      HomeSwiper
+      HomeSwiper,
+      HomeRecommend,
+      HomePopular
     },
     data() {
       return {
