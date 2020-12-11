@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="">
+    <img :src="goodsItem.show.img" alt="" @load="imageLoad">
     <div class="goods-info">
       <p class="goods-title">{{goodsItem.title}}</p>
       <span class="goods-price">{{goodsItem.price | getDollarSign}}</span>
@@ -23,6 +23,11 @@
     filters: {
       getDollarSign(value) {
         return '￥' + value
+      }
+    },
+    methods: {
+      imageLoad() {
+        this.$bus.$emit('itemImageLoad')
       }
     }
   }

@@ -8,15 +8,24 @@
 
 <script>
   import BScroll from '@better-scroll/core'
-  // import ObserveDom from '@better-scroll/observe-dom'
-  // BScroll.use(ObserveDOM)
+  import Pullup from '@better-scroll/pull-up'
+  BScroll.use(Pullup)
 
   export default {
     name: 'Scroll',
+    data() {
+      return {
+        bscroll: null
+      }
+    },
     props: {
       probeType: {
         type: Number,
         default: 0
+      },
+      pullUpLoad: {
+        type: Boolean,
+        default: false
       }
     },
     mounted() {
@@ -24,24 +33,41 @@
       this.initBScroll()
     },
     beforeDestroy() {
+      // 销毁 BetterScroll，解绑事件
       this.bscroll.destroy()
     },
     methods: {
       initBScroll() {
-        // 创建BScroll对象
+        // 实例化BScroll对象
         this.bscroll = new BScroll(this.$refs.wrapper, {
           scrollY: true,
           probeType: this.probeType,
-          click: true
+          click: true,
+          pullUpLoad: this.pullUpLoad
         })
 
         // 监听滚动的位置
-        this.bscroll.on('scroll', pos => {
-          this.$emit('scroll', pos)
-        })
+        if(this.probeType === 2 || this.probeType === 3) {
+          this.bscroll.on('scroll', pos => {
+            this.$emit('scroll', pos)
+          })          
+        }
+
+        // 监听上拉加载更多
+        if(this.pullUpLoad) {
+          this.bscroll.on('pullingUp', () => {
+            this.$emit('pullingUp')
+          })
+        }
       },
       scrollTo(x, y, time=300) {
-        this.bscroll.scrollTo(x, y, time)
+        this.bscroll && this.bscroll.scrollTo(x, y, time)
+      },
+      refresh() {
+        this.bscroll && this.bscroll.refresh()
+      },
+      finishPullUp() {
+        this.bscroll && this.bscroll.finishPullUp()
       }
     }
   }
