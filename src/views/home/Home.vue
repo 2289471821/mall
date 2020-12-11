@@ -4,7 +4,7 @@
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
 
     <!-- 首页滚动区域 -->
-    <scroll class="content">
+    <scroll class="scroll-content" ref="scroll" :probe-type="3" @scroll="contentScroll">
       <!-- 首页轮播图展示部分 -->
       <home-swiper :banners="banners"></home-swiper>
       <!-- 首页推荐展示部分 -->
@@ -15,6 +15,9 @@
       <tab-control class="home-tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
+
+    <!-- 返回顶部 -->
+    <back-top @click.native="backTop" v-show="isShowBackTop"></back-top>
   </div>
 </template>
 
@@ -23,6 +26,7 @@
   import Scroll from 'components/common/scroll/Scroll'
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goodsList/GoodsList'
+  import BackTop from 'components/content/backTop/BackTop'
 
   import HomeSwiper from './childComps/HomeSwiper'
   import HomeRecommend from './childComps/HomeRecommend'
@@ -39,7 +43,8 @@
       HomePopular,
       TabControl,
       GoodsList,
-      Scroll
+      Scroll,
+      BackTop
     },
     data() {
       return {
@@ -50,7 +55,8 @@
           'new': { page: 0, list: [] },
           'sell': { page: 0, list: [] },
         },
-        currentType: 'pop'
+        currentType: 'pop',
+        isShowBackTop: false
       }
     },
     computed: {
@@ -97,6 +103,12 @@
             this.currentType = 'sell'
             break
         }
+      },
+      backTop() {
+        this.$refs.scroll.scrollTo(0, 0, 500)
+      },
+      contentScroll(pos) {
+        this.isShowBackTop = -pos.y > 1000 ? true:false
       }
     }
   }
@@ -123,7 +135,7 @@
     top: 0.88rem;
     z-index: 99;
   }
-  .content {
+  .scroll-content {
     position: absolute;
     top: 0.88rem;
     bottom: 0.98rem;

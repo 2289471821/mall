@@ -1,5 +1,5 @@
 <template>
-  <div ref="scroll" class="scroll-wrapper">
+  <div ref="wrapper" class="scroll-wrapper">
     <div class="scroll-content">
       <slot></slot>
     </div>
@@ -13,29 +13,39 @@
 
   export default {
     name: 'Scroll',
-    data() {
-      return {
-
+    props: {
+      probeType: {
+        type: Number,
+        default: 0
       }
     },
     mounted() {
-      this.init()
+      // 初始化BScroll
+      this.initBScroll()
     },
     beforeDestroy() {
-      this.scroll.destroy()
+      this.bscroll.destroy()
     },
     methods: {
-      init() {
-        this.scroll = new BScroll(this.$refs.scroll, {
+      initBScroll() {
+        // 创建BScroll对象
+        this.bscroll = new BScroll(this.$refs.wrapper, {
           scrollY: true,
-          click: true,
-          probeType: 3
+          probeType: this.probeType,
+          click: true
         })
+
+        // 监听滚动的位置
+        this.bscroll.on('scroll', pos => {
+          this.$emit('scroll', pos)
+        })
+      },
+      scrollTo(x, y, time=300) {
+        this.bscroll.scrollTo(x, y, time)
       }
     }
   }
 </script>
 
 <style scoped>
-
 </style>

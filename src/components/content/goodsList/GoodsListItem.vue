@@ -62,6 +62,6 @@
     left: -0.3rem;
     width: 0.3rem;
     height: 0.3rem;
-    background: url('~assets/img/home/collect_icon.png') 0 0/0.3rem 0.3rem;
+    background: url('~assets/img/common/collect.png') 0 0/0.3rem 0.3rem;
   }
 </style>
