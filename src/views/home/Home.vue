@@ -2,17 +2,18 @@
   <div id="home">
     <!-- 顶部导航栏展示部分 -->
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick" ref="tabControl1" class="tab-control" v-show="isTabFixed"></tab-control>
 
     <!-- 首页滚动区域 -->
     <scroll class="scroll-content" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="contentScroll" @pullingUp="loadMore">
       <!-- 首页轮播图展示部分 -->
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       <!-- 首页推荐展示部分 -->
       <home-recommend :recommends="recommends"></home-recommend>
       <!-- 首页本周流行展示部分 -->
       <home-popular></home-popular>
       <!-- 首页商品列表展示部分 -->
-      <tab-control class="home-tab-control" :titles="['流行', '新款', '精选']" @tabClick="tabClick"></tab-control>
+      <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick" ref="tabControl2"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
 
@@ -57,7 +58,9 @@
           'sell': { page: 0, list: [] },
         },
         currentType: 'pop',
-        isShowBackTop: false
+        isShowBackTop: false,
+        tabOffsetTop: 0,
+        isTabFixed: false
       }
     },
     computed: {
@@ -75,8 +78,8 @@
       this.getGoodsData('sell')
     },
     mounted() {
+      // 监听 goodsItem 中图片加载完成
       const refresh = debounce(this.$refs.scroll.refresh, 1)
-      // 监听goodsItem中图片加载完成
       this.$bus.$on('itemImageLoad', () => refresh())
     },
     methods: {
@@ -96,18 +99,28 @@
             this.currentType = 'sell'
             break
         }
+        this.$refs.tabControl1.currentIndex = index
+        this.$refs.tabControl2.currentIndex = index
       },
       // 返回顶部
       backTop() {
         this.$refs.scroll.scrollTo(0, 0, 500)
       },
-      // 返回顶部按钮的显示与隐藏
+      // 监听滚动区域的滚动事件
       contentScroll(pos) {
+        // 返回顶部按钮的显示与隐藏
         this.isShowBackTop = -pos.y > 800 ? true:false
+
+        // tabControl 的吸顶效果(position: fixed)
+        this.isTabFixed = (-pos.y) >= this.tabOffsetTop ? true:false
       },
       // 上拉加载更多
       loadMore() {
         this.getGoodsData(this.currentType)
+      },
+      // 获取 tabControl 的 offectTop(距离上方或上层控件的位置)
+      swiperImageLoad() {
+        this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
       },
 
       /**
@@ -132,7 +145,6 @@
 
 <style scoped>
   #home {
-    padding-top: 0.88rem;
     height: 100vh;
   }
   .home-nav {
@@ -140,16 +152,6 @@
     color: #fff;
     font-size: 0.32rem;
     font-weight: 600;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 99;
-  }
-  .home-tab-control {
-    position: sticky;
-    top: 0.88rem;
-    z-index: 99;
   }
   .scroll-content {
     position: absolute;
@@ -158,5 +160,9 @@
     left: 0;
     right: 0;
     overflow: hidden;
+  }
+  .tab-control {
+    position: relative;
+    z-index: 99;
   }
 </style>
