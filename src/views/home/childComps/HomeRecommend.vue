@@ -3,7 +3,7 @@
     <div class="recommend-item" v-for="item in recommends" :key="item.sort">
       <a :href="item.link">
         <img :src="item.image" :alt="item.title">
-        <div>{{item.title}}</div>
+        <div class="title">{{item.title}}</div>
       </a>
     </div>
   </div>
@@ -41,5 +41,8 @@
   .recommend-item img {
     width: 80%;
     margin-bottom: 0.2rem;
+  }
+  .title {
+    color: #666666;
   }
 </style>

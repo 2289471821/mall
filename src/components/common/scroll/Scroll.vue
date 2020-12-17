@@ -9,7 +9,10 @@
 <script>
   import BScroll from '@better-scroll/core'
   import Pullup from '@better-scroll/pull-up'
+  import PullDown from '@better-scroll/pull-down'
+  
   BScroll.use(Pullup)
+  BScroll.use(PullDown)
 
   export default {
     name: 'Scroll',
@@ -24,6 +27,10 @@
         default: 0
       },
       pullUpLoad: {
+        type: Boolean,
+        default: false
+      },
+      pullDownRefresh: {
         type: Boolean,
         default: false
       }
@@ -43,7 +50,8 @@
           scrollY: true,
           probeType: this.probeType,
           click: true,
-          pullUpLoad: this.pullUpLoad
+          pullUpLoad: this.pullUpLoad,
+          pullDownRefresh: this.pullDownRefresh
         })
 
         // 监听滚动的位置

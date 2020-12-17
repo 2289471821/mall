@@ -13,8 +13,8 @@
 <style scoped>
   .back-top {
     position: absolute;
-    right: 0.2rem;
-    bottom: 1rem;
+    right: 0.4rem;
+    bottom: 1.6rem;
   }
   .back-top img {
     width: 1rem;

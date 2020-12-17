@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="skipDetailPage">
     <img :src="goodsItem.show.img" alt="" @load="imageLoad">
     <div class="goods-info">
       <p class="goods-title">{{goodsItem.title}}</p>
@@ -28,6 +28,15 @@
     methods: {
       imageLoad() {
         this.$bus.$emit('itemImageLoad')
+      },
+      // 跳转到详情页面
+      skipDetailPage() {
+        this.$router.push({
+          path: '/detail',
+          query: {
+            iid: this.goodsItem.iid
+          }
+        })
       }
     }
   }
@@ -46,6 +55,10 @@
   .goods-info {
     font-size: 0.24rem;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
   }
   .goods-title {
     overflow: hidden;
@@ -58,15 +71,15 @@
     margin-right: 0.4rem;
   }
   .goods-collect {
-    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
   }
   .goods-collect::before {
     content: '';
-    position: absolute;
-    top: 0;
-    left: -0.3rem;
     width: 0.3rem;
     height: 0.3rem;
-    background: url('~assets/img/common/collect.png') 0 0/0.3rem 0.3rem;
+    background-image: url('~assets/img/common/collect.png');
+    background-size: cover;
   }
 </style>

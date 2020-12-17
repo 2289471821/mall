@@ -118,7 +118,7 @@
       loadMore() {
         this.getGoodsData(this.currentType)
       },
-      // 获取 tabControl 的 offectTop(距离上方或上层控件的位置)
+      // 获取 tabControl 的offectTop(距离上方或上层控件的位置)
       swiperImageLoad() {
         this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
       },
