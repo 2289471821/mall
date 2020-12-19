@@ -7,13 +7,17 @@ export function request(config) {
 
   // 请求拦截
   instance.interceptors.request.use(
-    config => config,
+    config => {
+      return config
+    },
     error => console.log(error)
   )
 
   // 响应拦截
   instance.interceptors.response.use(
-    res =>  res.data,
+    res =>  {
+      return res.data
+    },
     error => console.log(error)
   )
 

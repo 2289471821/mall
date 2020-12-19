@@ -5,9 +5,18 @@
     <tab-control :titles="['流行', '新款', '精选']" @tabClick="tabClick" ref="tabControl1" class="tab-control" v-show="isTabFixed"></tab-control>
 
     <!-- 首页滚动区域 -->
-    <scroll class="scroll-content" ref="scroll" :probe-type="3" :pull-up-load="true" @scroll="contentScroll" @pullingUp="loadMore">
+    <scroll 
+      class="scroll-content"
+      ref="scroll" 
+      :probe-type="3" 
+      :pull-up-load="true" 
+      :pull-down-refresh="true" 
+      @scroll="contentScroll" 
+      @pullingUp="loadMore" 
+      @pullingDown="refresh"
+    >
       <!-- 首页轮播图展示部分 -->
-      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
+      <home-carousel :banners="banners" @swiperImageLoad="swiperImageLoad"></home-carousel>
       <!-- 首页推荐展示部分 -->
       <home-recommend :recommends="recommends"></home-recommend>
       <!-- 首页本周流行展示部分 -->
@@ -29,7 +38,7 @@
   import GoodsList from 'components/content/goodsList/GoodsList'
   import BackTop from 'components/content/backTop/BackTop'
 
-  import HomeSwiper from './childComps/HomeSwiper'
+  import HomeCarousel from './childComps/HomeCarousel'
   import HomeRecommend from './childComps/HomeRecommend'
   import HomePopular from './childComps/HomePopular'
 
@@ -40,7 +49,7 @@
     name: 'Home',
     components: {
       NavBar,
-      HomeSwiper,
+      HomeCarousel,
       HomeRecommend,
       HomePopular,
       TabControl,
@@ -55,7 +64,7 @@
         goods: {
           'pop': { page: 0, list: [] },
           'new': { page: 0, list: [] },
-          'sell': { page: 0, list: [] },
+          'sell': { page: 0, list: [] }
         },
         currentType: 'pop',
         isShowBackTop: false,
@@ -117,6 +126,24 @@
       // 上拉加载更多
       loadMore() {
         this.getGoodsData(this.currentType)
+      },
+      // 下拉刷新
+      refresh() {
+        this.banners = []
+        this.recommends = []
+        this.goods = {
+          'pop': { page: 0, list: [] },
+          'new': { page: 0, list: [] },
+          'sell': { page: 0, list: [] }
+        }
+        // 请求轮播图数据及推荐数据
+        this.getMultidata()
+        // 请求商品数据
+        this.getGoodsData('pop')
+        this.getGoodsData('new')
+        this.getGoodsData('sell')
+        // 关闭下拉刷新
+        this.$refs.scroll.finishPullDown()
       },
       // 获取 tabControl 的offectTop(距离上方或上层控件的位置)
       swiperImageLoad() {

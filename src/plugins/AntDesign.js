@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import {
-  Button
+  Carousel
 } from 'ant-design-vue'
 
-Vue.use(Button)
+Vue.use(Carousel)

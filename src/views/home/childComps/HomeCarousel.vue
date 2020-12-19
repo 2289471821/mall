@@ -1,17 +1,16 @@
 <template>
-  <swiper>
-    <swiper-item v-for="item in banners" :key="item.title">
+  <a-carousel autoplay>
+    <div v-for="(item, index) in banners" :key="index">
       <a :href="item.link">
         <img :src="item.image" :alt="item.title" @load="imageLoad">
       </a>
-    </swiper-item>
-  </swiper>
+    </div>
+  </a-carousel>
 </template>
 
 <script>
-  import { Swiper, SwiperItem } from 'components/common/swiper/index'
   export default {
-    name: 'HomeSwiper',
+    name: 'HomeCarousel',
     props: {
       banners: {
         type: Array,
@@ -25,10 +24,6 @@
         isLoad: false
       }
     },
-    components: {
-      Swiper,
-      SwiperItem
-    },
     methods: {
       imageLoad() {
         if(!this.isLoad) {
@@ -41,4 +36,7 @@
 </script>
 
 <style scoped>
+  img {
+    width: 100%;
+  }
 </style>

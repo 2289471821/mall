@@ -67,6 +67,13 @@
             this.$emit('pullingUp')
           })
         }
+
+        // 监听下拉刷新
+        if(this.pullDownRefresh) {
+          this.bscroll.on('pullingDown', () => {
+            this.$emit('pullingDown')
+          })
+        }
       },
       scrollTo(x, y, time=300) {
         this.bscroll && this.bscroll.scrollTo(x, y, time)
@@ -76,6 +83,9 @@
       },
       finishPullUp() {
         this.bscroll && this.bscroll.finishPullUp()
+      },
+      finishPullDown() {
+        this.bscroll && this.bscroll.finishPullDown()
       }
     }
   }
