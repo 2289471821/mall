@@ -20,6 +20,11 @@
       <!-- 推荐商品展示部分 -->
       <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
+
+    <!-- 返回顶部 -->
+    <back-top @click.native="backTop" v-show="isShowBackTop"></back-top>
+    <!--  -->
+    <detail-bottom-bar @addCart="addToCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -31,13 +36,14 @@
   import DetailGoodsInfo from './childComps/DetailGoodsInfo'
   import DetailParamInfo from './childComps/DetailParamInfo'
   import DetailCommentInfo from './childComps/DetailCommentInfo'
+  import DetailBottomBar from './childComps/DetailBottomBar'
 
   import Scroll from 'components/common/scroll/Scroll'
   import GoodsList from 'components/content/goodsList/GoodsList'
 
   import { getDetail, Goods, Shop, GoodsParam, getRecommend } from 'network/detail'
   import { debounce } from 'common/utils'
-  import { itemListerMixin } from 'common/mixin'
+  import { itemListerMixin, backTopMixin } from 'common/mixin'
 
   export default {
     name: 'Detail',
@@ -50,9 +56,10 @@
       DetailParamInfo,
       DetailCommentInfo,
       Scroll,
-      GoodsList
+      GoodsList,
+      DetailBottomBar
     },
-    mixins: [itemListerMixin],
+    mixins: [itemListerMixin, backTopMixin],
     data() {
       return {
         iid: null,
@@ -123,9 +130,12 @@
         this.$refs.scroll.scrollTo(0, -this.themeOffSetTop[index], 500)
       },
       contentScroll(pos) {
+        // 返回顶部按钮的显示与隐藏
+        this.listerShowBackTop(pos)
+
         // 获取滚动的距离
         const posY = -pos.y
-        
+
         const length = this.themeOffSetTop.length
         // 判断滚动的距离
         this.themeOffSetTop.forEach((value, index, arr) => {
@@ -134,6 +144,18 @@
             this.$refs.navbar.currentIndex = this.currentIndex
           }
         })
+      },
+      addToCart() {
+        // 获取购物车需要的信息
+        const product = {}
+        product.iid = this.iid
+        product.image = this.topImages[0]
+        product.title = this.goods.title
+        product.desc = this.goods.desc
+        product.price = this.goods.realPrice
+
+        // 将商品添加到购物车
+
       }
     }
   }

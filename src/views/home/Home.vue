@@ -36,7 +36,6 @@
   import Scroll from 'components/common/scroll/Scroll'
   import TabControl from 'components/content/tabControl/TabControl'
   import GoodsList from 'components/content/goodsList/GoodsList'
-  import BackTop from 'components/content/backTop/BackTop'
 
   import HomeCarousel from './childComps/HomeCarousel'
   import HomeRecommend from './childComps/HomeRecommend'
@@ -44,7 +43,7 @@
 
   import { getHomeMultidata, getHomeGoods } from 'network/home'
   import { debounce } from 'common/utils'
-  import { itemListerMixin } from 'common/mixin'
+  import { itemListerMixin, backTopMixin } from 'common/mixin'
 
   export default {
     name: 'Home',
@@ -55,10 +54,9 @@
       HomePopular,
       TabControl,
       GoodsList,
-      Scroll,
-      BackTop
+      Scroll
     },
-    mixins: [itemListerMixin],
+    mixins: [itemListerMixin, backTopMixin],
     data() {
       return {
         banners: [],
@@ -69,7 +67,6 @@
           'sell': { page: 0, list: [] }
         },
         currentType: 'pop',
-        isShowBackTop: false,
         tabOffsetTop: 0,
         isTabFixed: false
       }
@@ -112,14 +109,10 @@
         this.$refs.tabControl1.currentIndex = index
         this.$refs.tabControl2.currentIndex = index
       },
-      // 返回顶部
-      backTop() {
-        this.$refs.scroll.scrollTo(0, 0, 500)
-      },
       // 监听滚动区域的滚动事件
       contentScroll(pos) {
         // 返回顶部按钮的显示与隐藏
-        this.isShowBackTop = -pos.y > 800 ? true:false
+        this.listerShowBackTop(pos)
 
         // tabControl 的吸顶效果(position: fixed)
         this.isTabFixed = (-pos.y) >= this.tabOffsetTop ? true:false
