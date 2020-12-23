@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click="skipDetailPage">
-    <img :src="goodsItem.show.img" alt="" @load="imageLoad">
+    <img :src="showImage" alt="" @load="imageLoad">
     <div class="goods-info">
       <p class="goods-title">{{goodsItem.title}}</p>
       <span class="goods-price">{{goodsItem.price | getDollarSign}}</span>
@@ -18,6 +18,11 @@
         default() {
           return {}
         }
+      }
+    },
+    computed: {
+      showImage() {
+        return this.goodsItem.image || this.goodsItem.show.img
       }
     },
     filters: {

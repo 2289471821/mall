@@ -1,7 +1,7 @@
 <template>
   <a-carousel autoplay>
     <div v-for="(item, index) in topImages" :key="index">
-      <img :src="item" alt="" @load="imageLoad">
+      <img :src="item" alt="">
     </div>
   </a-carousel>
 </template>
@@ -20,14 +20,6 @@
     data() {
       return {
         isLoad: false
-      }
-    },
-    methods: {
-      imageLoad() {
-        if(!this.isLoad) {
-          this.$emit('carouselImageLoad')
-          this.isLoad = true
-        }
       }
     }
   }

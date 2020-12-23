@@ -1,20 +1,24 @@
 <template>
   <div id="detail">
-    <!-- 详情页导航栏展示部分 -->
-    <detail-nav-bar></detail-nav-bar>
+    <!-- 导航栏展示部分 -->
+    <detail-nav-bar @themeClick="themeClick" ref="navbar"></detail-nav-bar>
 
-    <!-- 详情页滚动区域 -->
-    <scroll 
-      class="scroll-content"
-      ref="scroll"
-      :probe-type="3"
-    >
-      <!-- 详情页轮播图展示部分 -->
-      <detail-carousel :top-images="topImages" @carouselImageLoad="carouselImageLoad"></detail-carousel>
-      <!-- 详情页商品信息展示部分 -->
+    <!-- 滚动区域 -->
+    <scroll class="scroll-content" ref="scroll" :probe-type="3" @scroll="contentScroll">
+      <!-- 轮播图展示部分 -->
+      <detail-carousel :top-images="topImages"></detail-carousel>
+      <!-- 商品基本信息展示部分 -->
       <detail-base-info :goods="goods"></detail-base-info>
-      <!-- 详情页店铺信息展示部分 -->
-      <detail-shop-info :shops="shops"></detail-shop-info>      
+      <!-- 店铺信息展示部分 -->
+      <detail-shop-info :shops="shops"></detail-shop-info>
+      <!-- 商品详情信息展示部分 -->
+      <detail-goods-info :detail-info="detailInfo" @imageLoad="goodsImageLoad"></detail-goods-info>
+      <!-- 商品参数信息展示部分 -->
+      <detail-param-info ref="param" :param-info="paramInfo"></detail-param-info>
+      <!-- 商品评论信息展示部分 -->
+      <detail-comment-info ref="comment" :comment-info="commentInfo"></detail-comment-info>
+      <!-- 推荐商品展示部分 -->
+      <goods-list ref="recommend" :goods="recommends"></goods-list>
     </scroll>
   </div>
 </template>
@@ -24,10 +28,16 @@
   import DetailCarousel from './childComps/DetailCarousel'
   import DetailBaseInfo from './childComps/DetailBaseInfo'
   import DetailShopInfo from './childComps/DetailShopInfo.vue'
+  import DetailGoodsInfo from './childComps/DetailGoodsInfo'
+  import DetailParamInfo from './childComps/DetailParamInfo'
+  import DetailCommentInfo from './childComps/DetailCommentInfo'
 
   import Scroll from 'components/common/scroll/Scroll'
+  import GoodsList from 'components/content/goodsList/GoodsList'
 
-  import { getDetail, Goods, Shop } from 'network/detail'
+  import { getDetail, Goods, Shop, GoodsParam, getRecommend } from 'network/detail'
+  import { debounce } from 'common/utils'
+  import { itemListerMixin } from 'common/mixin'
 
   export default {
     name: 'Detail',
@@ -36,34 +46,94 @@
       DetailCarousel,
       DetailBaseInfo,
       DetailShopInfo,
-      Scroll
+      DetailGoodsInfo,
+      DetailParamInfo,
+      DetailCommentInfo,
+      Scroll,
+      GoodsList
     },
+    mixins: [itemListerMixin],
     data() {
       return {
         iid: null,
         topImages: [],
         goods: {},
-        shops: {}
+        shops: {},
+        detailInfo: {},
+        paramInfo: {},
+        commentInfo: {},
+        recommends: [],
+        themeOffSetTop: [],
+        currentIndex: 0
       }
     },
     created() {
       this.iid = this.$route.query.iid
 
+      // 请求商品详情数据
       this.getDetailData(this.iid)
+      // 请求推荐数据
+      this.getRecommendData()
+    },
+    destroyed() {
+      // 取消全局事件的监听
+      this.$bus.$off('itemImageLoad', this.itemImgLister)
     },
     methods: {
       async getDetailData(iid) {
+        // 获取信息
         const { result } = await getDetail(iid)
-        console.log(result)
+
         // 获取顶部轮播数据
         this.topImages = result.itemInfo.topImages
-        // 获取商品信息
+
+        // 获取商品基本数据
         this.goods = new Goods(result.itemInfo, result.columns, result.shopInfo.services)
-        // 获取店铺信息
+
+        // 获取店铺数据
         this.shops = new Shop(result.shopInfo)
+
+        // 获取商品详情数据
+        this.detailInfo = result.detailInfo
+
+        // 获取商品参数数据
+        this.paramInfo = new GoodsParam(result.itemParams.info, result.itemParams.rule)
+
+        // 获取商品评论数据
+        if(result.rate.cRate !== 0) {
+          this.commentInfo = result.rate.list[0]
+        }
       },
-      carouselImageLoad() {
+      async getRecommendData() {
+        const { data: res } = await getRecommend()
+        this.recommends = res.list
+      },
+
+      goodsImageLoad() {
         this.$refs.scroll.refresh()
+        
+        this.$nextTick(() => {
+          this.themeOffSetTop.push(0)
+          this.themeOffSetTop.push(this.$refs.param.$el.offsetTop)
+          this.themeOffSetTop.push(this.$refs.comment.$el.offsetTop)
+          this.themeOffSetTop.push(this.$refs.recommend.$el.offsetTop)
+        })
+      },
+      themeClick(index) {
+        this.$refs.scroll.scrollTo(0, -this.themeOffSetTop[index], 500)
+      },
+      contentScroll(pos) {
+        // 获取滚动的距离
+        const posY = -pos.y
+        
+        const length = this.themeOffSetTop.length
+        // 判断滚动的距离
+        this.themeOffSetTop.forEach((value, index, arr) => {
+          if(this.currentIndex !== index && ((index < length - 1 && posY >= arr[index] && posY < arr[index + 1]) || (index === length -1 && posY >= arr[index]))) {
+            this.currentIndex = index
+            this.$refs.navbar.currentIndex = this.currentIndex
+          }
+        })
       }
     }
   }

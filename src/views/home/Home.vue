@@ -44,6 +44,7 @@
 
   import { getHomeMultidata, getHomeGoods } from 'network/home'
   import { debounce } from 'common/utils'
+  import { itemListerMixin } from 'common/mixin'
 
   export default {
     name: 'Home',
@@ -57,6 +58,7 @@
       Scroll,
       BackTop
     },
+    mixins: [itemListerMixin],
     data() {
       return {
         banners: [],
@@ -86,10 +88,9 @@
       this.getGoodsData('new')
       this.getGoodsData('sell')
     },
-    mounted() {
-      // 监听 goodsItem 中图片加载完成
-      const refresh = debounce(this.$refs.scroll.refresh, 1)
-      this.$bus.$on('itemImageLoad', () => refresh())
+    deactivated() {
+      // 取消全局事件的监听
+      this.$bus.$off('itemImageLoad', this.itemImgLister)
     },
     methods: {
       /**
